@@ -21,13 +21,20 @@ from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from django.views.decorators.csrf import csrf_exempt
+from maps import views as mapview
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('reg_sign_in_out.urls'),name="reg_sign_in_out"),
+    
+    path('',include('rewards.urls'),name="rewards"),
+    path('',mapview.default_map ,name='mapview'),
     path('logout/',views.user_logout,name='logout'),
     path('password-reset/',auth_views.PasswordResetView.as_view(template_name='password_reset.html', email_template_name='email_template.html'),name='reset_password'),
     path('password-reset/sent/',auth_views.PasswordResetDoneView.as_view(template_name='password_reset_sent.html'),name='password_reset_done'),
     path('password-reset-confirm/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html',success_url = reverse_lazy('reg_sign_in_out:user_login')),name='password_reset_confirm'),
     path('password-reset-complete/',auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html',),name='password_reset_complete'),
+
+    # path('',include('maps.urls'),name="maps"),
 ]
