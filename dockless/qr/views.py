@@ -40,7 +40,9 @@ def valQR(path):
     # data = decode(Image.open(path))
     data = read_barcodes(cv2.imread(path,1)[1])
     print(data)
-    if data[0].data == staticdb.QR_DATA:
+    # if data[0].data == staticdb.QR_DATA:
+    if data == staticdb.QR_DATA:
+
         g = geocoder.ip('me').latlng
         min = euc(staticdb.QR_LOCATIONS[0],g)
         for coords in staticdb.QR_LOCATIONS[1:]:
