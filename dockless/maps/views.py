@@ -44,6 +44,11 @@ def default_map(request):
             folium.Marker(location=tuple(coords),tooltip='QR Code',icon=folium.Icon(color='blue')).add_to(m)
         else:
             folium.Marker(location=tuple(coords),tooltip='QR Code',icon=folium.Icon(color='green')).add_to(m)
+    
+    folium.PolyLine([g.latlng,mincord],
+                color='red',
+                weight=15,
+                opacity=0.8).add_to(m)
     m = m._repr_html_()
     return render(request, 'maps/default.html', 
                   { 'map': m })

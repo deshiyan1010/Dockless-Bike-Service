@@ -18,11 +18,12 @@ def euc(c1,c2):
 
 
 def read_barcodes(frame):
-    barcodes = pyzbar.decode(frame)
+    barcodes = decode(frame)
+    print(frame.shape)
     for barcode in barcodes:
         x, y , w, h = barcode.rect
         #1
-        barcode_info = barcode.data.decode('utf-8')
+        barcode_info = barcode.data
         # cv2.rectangle(frame, (x, y),(x+w, y+h), (0, 255, 0), 2)
         
         # #2
@@ -31,16 +32,18 @@ def read_barcodes(frame):
         # #3
         # with open("barcode_result.txt", mode ='w') as file:
         #     file.write("Recognized Barcode:" + barcode_info)
-    return barcode_info
+        barcode_info = barcode_info.decode('utf-8')
+        print("Barcode:", barcode_info)
+        return barcode_info
 
 
 
 def valQR(path):
 
     # data = decode(Image.open(path))
-    data = read_barcodes(cv2.imread(path,1)[1])
-    print(data)
-    # if data[0].data == staticdb.QR_DATA:
+    data = read_barcodes(cv2.imread(path,1))
+    print(type(data),type(staticdb.QR_DATA))
+    
     if data == staticdb.QR_DATA:
 
         g = geocoder.ip('me').latlng
@@ -49,7 +52,7 @@ def valQR(path):
             dist = euc(coords,g)
             if dist<min:
                 min = dist
-        if min<0.0:
+        if min<0.4:
             return 1
             
         else:
