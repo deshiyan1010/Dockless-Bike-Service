@@ -12,17 +12,20 @@ from django.core.management import call_command
 
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-from rides.models import Bikes
+client.connect(('192.168.43.229', 8084))
 
-def check_in_danger():
-    client.connect(('0.0.0.0', 8081))
-    # client.send(bytes("100",'utf-8'))
-    while True:
-        from_server = client.recv(4096)
-        if not from_server:
-            continue
-        if json.loads(from_server)['in_danger']==True:
-            update(json.loads(from_server))
+from rides.models import Bikes
+from django.contrib.auth.models import User
+
+# def check_in_danger():
+#     client.connect(('192.168.219.229', 8080))
+#     # client.send(bytes("100",'utf-8'))
+#     while True:
+#         from_server = client.recv(4096)
+#         if not from_server:
+#             continue
+#         if json.loads(from_server)['in_danger']==True:
+#             update(json.loads(from_server))
     
 def update(data,start):
     lp = data['lp']
@@ -38,6 +41,7 @@ def update(data,start):
         bike_obj.latitude = latitude
         bike_obj.longitude = longitude
         bike_obj.being_used = start
+        # bike_obj.user = User.objects.get(username='null')
         bike_obj.save()
     except:
         bike_obj = Bikes(bike_number=lp,
@@ -45,30 +49,32 @@ def update(data,start):
                         latitude=latitude,
                         helmet_in=helmet_in,
                         in_danger=in_danger,
-                        being_used=start,)
+                        being_used=start,
+                        user=User.objects.get(username='null')
+                        )
         bike_obj.save()
 
 
-
 def get_stat():
-    client.connect(('0.0.0.0', 8080))
+    global client
     client.send(bytes("100",'utf-8'))
     while True:
         from_server = client.recv(4096)
         if not from_server:
-            continue
-        client.close()
+            continue     
         return json.loads(from_server)
 
 
-t1 = threading.Thread(target=check_in_danger, args=())
-t1.start()
+# t1 = threading.Thread(target=check_in_danger, args=())
+# t1.start()
 
-data = get_stat()
-update(data,True)
-print(data)
 
-i=0
-while 1:
-    print(f"\rServer doing server shit {i}",end='')
-    i+=1
+if __name__=="__main__":
+    i=0
+    while 1:
+        print(f"\rServer doing server shit {i}",end='')
+        data = get_stat()
+        update(data,True)
+        print(data)
+        i+=1
+    client.close()

@@ -75,7 +75,7 @@ def user_login(request):
                 login(request,user)
                 if username == "admin":
                     return HttpResponseRedirect(reverse('reg_sign_in_out:registration'))
-                return HttpResponseRedirect(reverse('hq:new_entry'))
+                return HttpResponseRedirect(reverse('maps:map'))
 
         else:
 

@@ -8,4 +8,4 @@ class Bikes(models.Model):
     helmet_in = models.BooleanField()
     in_danger = models.BooleanField()
     being_used = models.BooleanField()
-    person = models.ForeignKey(User,on_delete=models.CASCADE)
+    user = models.ForeignKey(User,on_delete=models.CASCADE,null=True)

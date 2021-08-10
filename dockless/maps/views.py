@@ -9,13 +9,19 @@ import os
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 import math
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
+from rides.views import end_ride
+
 
 def euc(c1,c2):
     return math.sqrt((c1[0]-c2[0])**2+(c1[1]-c2[1])**2)
 
 
-def default_map(request):
 
+@csrf_protect
+@login_required
+def map(request):
 
     if request.method == 'POST' and request.FILES['myfile']:
         myfile = request.FILES['myfile']
@@ -23,7 +29,8 @@ def default_map(request):
         filename = fs.save(myfile.name, myfile)
         uploaded_file_url = fs.url(filename)
         val = valQR(os.getcwd()+str(uploaded_file_url))
-        if val==1:
+        helmet_in = end_ride(request)
+        if val==1 and helmet_in:
             return HttpResponseRedirect(reverse('rewards:valReward'))
         else:
             return HttpResponseRedirect(reverse('rewards:invalReward'))
@@ -51,5 +58,5 @@ def default_map(request):
                 opacity=0.8).add_to(m)
     m = m._repr_html_()
     return render(request, 'maps/default.html', 
-                  { 'map': m })
+                  { 'map': m, })
 

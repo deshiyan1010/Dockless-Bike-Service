@@ -21,7 +21,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from django.views.decorators.csrf import csrf_exempt
-from maps import views as mapview
+from maps import views as map
 
 
 urlpatterns = [
@@ -29,7 +29,7 @@ urlpatterns = [
     path('',include('reg_sign_in_out.urls'),name="reg_sign_in_out"),
     
     path('',include('rewards.urls'),name="rewards"),
-    path('',mapview.default_map ,name='mapview'),
+    path('',include('maps.urls') ,name='maps'),
     path('logout/',views.user_logout,name='logout'),
     path('password-reset/',auth_views.PasswordResetView.as_view(template_name='password_reset.html', email_template_name='email_template.html'),name='reset_password'),
     path('password-reset/sent/',auth_views.PasswordResetDoneView.as_view(template_name='password_reset_sent.html'),name='password_reset_done'),
